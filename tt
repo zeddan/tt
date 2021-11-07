@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
+require "tty-prompt"
+
 require_relative "db"
 require_relative "initializer"
 
-DIR_PATH = File.expand_path("~/.tt")
-
 @db = DB.new
+@prompt = TTY::Prompt.new
 
 def start
-  print "name: "
-  name = $stdin.gets.chomp
+  name = @prompt.ask("Name:")
   now = Time.now
   @db.start(
     id: now.hash,
@@ -18,6 +18,11 @@ def start
     timestamp: now,
     name: name
   )
+end
+
+def stop
+  activity = @prompt.select("Select activity", @db.active, filter: true)
+  @db.stop(activity)
 end
 
 case ARGV.first
@@ -30,6 +35,9 @@ when "init"
 when "start"
 	start
 	exit
+when "stop"
+  stop
+  exit
 else
 	puts "tt: command not found: #{ARGV.first}"
 	exit 1

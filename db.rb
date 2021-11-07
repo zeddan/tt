@@ -1,17 +1,89 @@
 require "csv"
 
 class DB
-  def initialize; end
+  DIR_PATH = File.expand_path("~/.tt")
+  ACTIVE_PATH = "#{DIR_PATH}/active.csv"
+  DB_PATH = "#{DIR_PATH}/db.csv"
+
+  COLUMNS = %w(id type timestamp name)
+
+  def reset
+    CSV.open(ACTIVE_PATH, "wb") do |csv|
+      csv << COLUMNS
+    end
+
+    CSV.open(DB_PATH, "wb") do |csv|
+      csv << COLUMNS
+    end
+  end
 
   def start(args)
-    CSV.open("#{DIR_PATH}/active.csv", "a") do |csv|
+    append_active(args)
+  end
+
+  def stop(name)
+    save_activity(name)
+    remove_from_active(name)
+  end
+
+  def active
+    csv = CSV.read(ACTIVE_PATH)
+    csv.select { |row| row[1] == "start" }.map { |row| row[3] }
+  end
+
+  private
+
+  def remove_from_active(name)
+    table = CSV.parse(csv_as_string, headers: true)
+    table.delete_if { |row| row["name"] == name }
+    CSV.open(ACTIVE_PATH, "wb") do |csv|
+      csv << COLUMNS
+      table.each do |row|
+        csv << row
+      end
+    end
+  end
+
+  def save_activity(name)
+    activity = CSV.read(ACTIVE_PATH).detect { |row| row[3] == name }
+
+    # save starting time
+    CSV.open(DB_PATH, "a") do |csv|
+      csv << activity
+    end
+
+    # save ending time
+    append_db(
+      id: activity[0],
+      type: "stop",
+      timestamp: Time.now,
+      name: activity[3]
+    )
+  end
+
+  def append_active(args)
+    CSV.open(ACTIVE_PATH, "a") do |csv|
       csv << [
         args[:id],
         args[:type],
-        args[:reference],
         args[:timestamp],
         args[:name]
       ]
     end
+  end
+
+  def append_db(args)
+    CSV.open(DB_PATH, "a") do |csv|
+      csv << [
+        args[:id],
+        args[:type],
+        args[:timestamp],
+        args[:name]
+      ]
+    end
+  end
+
+  def csv_as_string
+    CSV.read(ACTIVE_PATH).map(&:to_csv).join
   end
 end
