@@ -27,19 +27,19 @@ end
 
 case ARGV.first
 when nil
-	# default
-	exit
+  # default
+  exit
 when "init"
   Initializer.init
-	exit
+  exit
 when "start"
-	start
-	exit
+  start
+  exit
 when "stop"
   stop
   exit
 else
-	puts "tt: command not found: #{ARGV.first}"
-	exit 1
+  puts "tt: command not found: #{ARGV.first}"
+  exit 1
 end
 
