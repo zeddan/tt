@@ -28,6 +28,16 @@ class DB
 
   def active
     csv = CSV.read(ACTIVE_PATH)
+    # [1..-1] = remove the columns header
+    csv[1..-1].map do |row|
+      # row[3] = name
+      # row[2] = timestamp
+      [row[3], parse_timestamp(row[2])]
+    end
+  end
+
+  def active_names
+    csv = CSV.read(ACTIVE_PATH)
     csv.select { |row| row[1] == "start" }.map { |row| row[3] }
   end
 
@@ -81,6 +91,10 @@ class DB
         args[:name]
       ]
     end
+  end
+
+  def parse_timestamp(timestamp)
+    DateTime.parse(timestamp).strftime("%Y-%m-%d at %H:%M:%S")
   end
 
   def csv_as_string

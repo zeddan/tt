@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "tty-prompt"
+require "tty-table"
 
 require_relative "db"
 require_relative "initializer"
@@ -21,13 +22,22 @@ def start
 end
 
 def stop
-  activity = @prompt.select("Select activity", @db.active, filter: true)
+  activity = @prompt.select("Select activity", @db.active_names, filter: true)
   @db.stop(activity)
+end
+
+def show_active
+  active = @db.active
+  table = TTY::Table.new(["Name", "Started"], active)
+  puts table.render(:unicode)
 end
 
 case ARGV.first
 when nil
   # default
+  exit
+when "active"
+  show_active
   exit
 when "init"
   Initializer.init
