@@ -1,21 +1,23 @@
 #!/usr/bin/env ruby
 
-require "csv"
+require_relative "db"
+require_relative "initializer"
 
 DIR_PATH = File.expand_path("~/.tt")
 
-def init
-	system("mkdir", "-p", DIR_PATH) unless Dir.exist?(DIR_PATH)
+@db = DB.new
 
-	header = %w(id type reference timestamp name)
-
-	CSV.open("#{DIR_PATH}/active.csv", "wb") do |csv|
-		csv << header
-	end
-
-	CSV.open("#{DIR_PATH}/db.csv", "wb") do |csv|
-		csv << header
-	end
+def start
+  print "name: "
+  name = $stdin.gets.chomp
+  now = Time.now
+  @db.start(
+    id: now.hash,
+    type: "start",
+    reference: nil,
+    timestamp: now,
+    name: name
+  )
 end
 
 case ARGV.first
@@ -23,7 +25,10 @@ when nil
 	# default
 	exit
 when "init"
-	init
+  Initializer.init
+	exit
+when "start"
+	start
 	exit
 else
 	puts "tt: command not found: #{ARGV.first}"
