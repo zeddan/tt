@@ -9,8 +9,8 @@ require_relative "initializer"
 @db = DB.new
 @prompt = TTY::Prompt.new
 
-def start
-  name = @prompt.ask("Name:")
+def start(name = "")
+  name = @prompt.ask("Name:") if name.nil?
   now = Time.now
   @db.start(
     id: now.hash,
@@ -43,7 +43,7 @@ when "init"
   Initializer.init
   exit
 when "start"
-  start
+  start(ARGV[1])
   exit
 when "stop"
   stop
