@@ -26,6 +26,8 @@ class DB
     remove_from_active(name)
   end
 
+  # returns an array of arrays containing name and timestamp
+  # e.g [["a", "2020-10-10 at 15:50"], [...]]
   def active
     csv = CSV.read(ACTIVE_PATH)
     # [1..-1] = remove the columns header
@@ -36,9 +38,15 @@ class DB
     end
   end
 
+  # returns an array of strings
+  # e.g ["task1", "task2"]
   def active_names
     csv = CSV.read(ACTIVE_PATH)
     csv.select { |row| row[1] == "start" }.map { |row| row[3] }
+  end
+
+  def already_active?(name)
+    active_names.include?(name)
   end
 
   private
