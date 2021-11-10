@@ -22,9 +22,15 @@ def start(name = "")
   )
 end
 
-def stop
-  activity = @prompt.select("Select activity", @db.active_names, filter: true)
-  @db.stop(activity)
+def stop(name)
+  if name.nil?
+    names_active = @db.names_active
+    fail("nothing to stop") if names_active.empty?
+    name = @prompt.select("Select activity", names_active, filter: true)
+  else
+    fail("#{name} is not active") if !@db.already_active?(name)
+  end
+  @db.stop(name)
 end
 
 def show_active
@@ -52,7 +58,7 @@ when "start"
   start(ARGV[1])
   exit
 when "stop"
-  stop
+  stop(ARGV[1])
   exit
 else
   puts "tt: command not found: #{ARGV.first}"

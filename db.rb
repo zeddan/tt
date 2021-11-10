@@ -40,13 +40,13 @@ class DB
 
   # returns an array of strings
   # e.g ["task1", "task2"]
-  def active_names
+  def names_active
     csv = CSV.read(ACTIVE_PATH)
     csv.select { |row| row[1] == "start" }.map { |row| row[3] }
   end
 
   def already_active?(name)
-    active_names.include?(name)
+    names_active.include?(name)
   end
 
   private
