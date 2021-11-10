@@ -46,7 +46,7 @@ end
 
 case ARGV.first
 when nil
-  # default
+  show_active
   exit
 when "active"
   show_active
