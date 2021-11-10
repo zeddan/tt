@@ -40,7 +40,7 @@ def show_active
 end
 
 def fail(message)
-  puts message
+  puts "tt: #{message}"
   exit 1
 end
 
@@ -61,7 +61,7 @@ when "stop"
   stop(ARGV[1])
   exit
 else
-  puts "tt: command not found: #{ARGV.first}"
+  fail("command not found: #{ARGV.first}")
   exit 1
 end
 
