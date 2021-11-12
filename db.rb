@@ -45,7 +45,7 @@ class DB
     csv.select { |row| row[1] == "start" }.map { |row| row[3] }
   end
 
-  def already_active?(name)
+  def active?(name)
     names_active.include?(name)
   end
 

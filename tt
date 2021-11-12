@@ -11,7 +11,7 @@ require_relative "initializer"
 
 def start(name = "")
   name = @prompt.ask("Name:") if name.nil?
-  fail("#{name} is already active") if @db.already_active?(name)
+  fail("#{name} is already active") if @db.active?(name)
   now = Time.now
   @db.start(
     id: now.hash,
@@ -28,7 +28,7 @@ def stop(name)
     fail("nothing to stop") if names_active.empty?
     name = @prompt.select("Select activity", names_active, filter: true)
   else
-    fail("#{name} is not active") if !@db.already_active?(name)
+    fail("#{name} is not active") if !@db.active?(name)
   end
   @db.stop(name)
 end
