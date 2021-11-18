@@ -5,6 +5,7 @@ require "tty-table"
 
 require_relative "db"
 require_relative "initializer"
+require_relative "parser"
 
 @db = DB.new
 @prompt = TTY::Prompt.new
@@ -39,6 +40,13 @@ def show_active
   puts table.render(:unicode)
 end
 
+def show_report
+  # .compact should not be needed here
+  all = Parser.new(@db.all).parse.compact
+  table = TTY::Table.new(["Name", "Started"], all)
+  puts table.render(:unicode)
+end
+
 def fail(message)
   puts "tt: #{message}"
   exit 1
@@ -50,6 +58,9 @@ when nil
   exit
 when "active"
   show_active
+  exit
+when "all", "show"
+  show_report
   exit
 when "init"
   Initializer.init

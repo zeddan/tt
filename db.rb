@@ -26,6 +26,10 @@ class DB
     remove_from_active(name)
   end
 
+  def all
+    CSV.read(DB_PATH)[1..-1]
+  end
+
   # returns an array of arrays containing name and timestamp
   # e.g [["a", "2020-10-10 at 15:50"], [...]]
   def active
