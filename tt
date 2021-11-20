@@ -41,8 +41,7 @@ def show_active
 end
 
 def show_report
-  # .compact should not be needed here
-  all = Parser.new(@db.all).parse.compact
+  all = Parser.new(@db.all).parse
   table = TTY::Table.new(["Name", "Started"], all)
   puts table.render(:unicode)
 end
