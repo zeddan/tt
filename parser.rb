@@ -3,21 +3,25 @@ require "time"
 class Parser
   def initialize(input)
     @input = input
-    @stack = []
+    @summary = Hash.new { |hash, key| hash[key] = 0 }
+    @start_times = {}
   end
 
   def parse
-    @input.group_by(&:first).map do |_, v|
-      next unless v.size == 2
-
-      name = v[0][3]
-
-      stop = Time.parse(v[1][2])
-      start = Time.parse(v[0][2])
-      time = stop - start
-
-      [name, format_seconds(time.to_i)]
+    @input.each do |row|
+      if row[1] == "start"
+        @start_times[row[0]] = row
+      elsif row[1] == "stop"
+        seconds = time_to_seconds(@start_times[row[0]], row)
+        @summary[row[-1]] += seconds
+      end
     end
+
+    @summary.map { |k,v| [k, format_seconds(v)] }
+  end
+
+  def time_to_seconds(start_entry, stop_entry)
+    ( Time.parse(stop_entry[2]) - Time.parse(start_entry[2]) ).to_i
   end
 
   private
