@@ -18,6 +18,7 @@ class Parser
     end
 
     @summary.map { |k,v| [k, format_seconds(v)] }
+            .sort_by { |k| k[0]}
   end
 
   def time_to_seconds(start_entry, stop_entry)
